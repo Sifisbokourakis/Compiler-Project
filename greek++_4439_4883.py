@@ -203,16 +203,18 @@ def lex():
             char_tk = modu
         elif(char == '_'):
             char_tk = underscore
+        elif(char == ''):
+            char_tk = EOF
         else:
             char_tk = wrong_symbol
 
-        print("Trexousa katastas", current)
-        print("Vlepo xaraktira", char)
+        #print("Trexousa katastas", current)
+        #print("Vlepo xaraktira", char)
 
         current = states_array[current][char_tk]
 
-        print("nea katastasi", current)
-        input("Press enter to continue")
+        #print("nea katastasi", current)
+        #input("Press enter to continue")
 
         if(len(word)< 30):
             if(current != start_state and current != comment_state):
@@ -241,7 +243,7 @@ def lex():
             current = else_tk
         elif(word == 'εάν_τέλος'):
             current = end_if_tk
-        elif(word == 'επανέλαβε'):
+        elif(word == 'επανάλαβε'):
             current = repeat_tk
         elif(word == 'μέχρι'):
             current = until_tk
