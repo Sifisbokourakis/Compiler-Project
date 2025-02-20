@@ -201,7 +201,7 @@ def lex():
         elif(char == '%'):
             char_tk = modu
         elif(char == '_'):
-            char = underscore
+            char_tk = underscore
         else:
             char_tk = wrong_symbol
 
@@ -219,7 +219,7 @@ def lex():
 
     if(current == identifier_tk or current == number_tk or current == less_tk or current == greater_tk or current == colon):
         if(char == '\n'):
-           linecounter += 1
+           linecounter -= 1
         file.seek(file.tell()-1,0)
         word = word[:-1]
 
