@@ -154,8 +154,8 @@ def lex():
 
     linecounter = line
     resultLex = []
-
-    while (current >= 0, current <= 6):
+    char_tk = 0
+    while (current >= 0 and current <= 6):
         char = file.read(1)
 
         if(char == ' ' or char == '\t'):
@@ -205,6 +205,8 @@ def lex():
         else:
             char_tk = wrong_symbol
 
+        #print("Trexousa katastas", current)
+        #print("Vlepo xaraktira", char)
 
         current = states_array[current][char_tk]
 
@@ -213,11 +215,11 @@ def lex():
                 word += char
         else:
             current = ERROR_EXCEDEED_LIMIT_OF_CHARACTERS
-
+        #print(word)
 
     if(current == identifier_tk or current == number_tk or current == less_tk or current == greater_tk or current == colon):
         if(char == '\n'):
-           linecounter -= 1
+           linecounter += 1
         file.seek(file.tell()-1,0)
         word = word[:-1]
 
