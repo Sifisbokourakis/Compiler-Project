@@ -126,8 +126,8 @@ states_array = [
          identifier_tk, identifier_tk, identifier_tk, identifier_tk, identifier_tk, identifier_tk, identifier_tk, identifier_tk, identifier_tk,
          identifier_tk, identifier_tk, identifier_tk, identifier_tk, letter_state, identifier_tk, ERROR_WRONG_SYMBOL],
     #number state
-        [number_tk, ERROR_NUMBER_LETTER, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state,
-         number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state, number_state,
+        [number_tk, ERROR_NUMBER_LETTER, number_state, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk,
+         number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk, number_tk,
          ERROR_WRONG_SYMBOL],
     #less state
         [less_tk, less_tk, less_tk, less_tk, less_tk, less_tk, less_tk, less_tk, different_tk, lessOrEqual_tk, less_tk, less_tk, less_tk, less_tk, less_tk, less_tk, less_tk,
@@ -179,6 +179,7 @@ def lex():
         elif(char == '='):
             char_tk = equal
         elif(char == '\n'):
+            linecounter = linecounter + 1
             char_tk = new_line
         elif(char == ';'):
             char_tk = semicolon
@@ -195,9 +196,9 @@ def lex():
         elif(char == ']'):
             char_tk = right_bracket
         elif(char == '{'):
-            char_tk = right_comment
-        elif(char == '}'):
             char_tk = left_comment
+        elif(char == '}'):
+            char_tk = right_comment
         elif(char == '%'):
             char_tk = modu
         elif(char == '_'):
@@ -205,10 +206,13 @@ def lex():
         else:
             char_tk = wrong_symbol
 
-        #print("Trexousa katastas", current)
-        #print("Vlepo xaraktira", char)
+        print("Trexousa katastas", current)
+        print("Vlepo xaraktira", char)
 
         current = states_array[current][char_tk]
+
+        print("nea katastasi", current)
+        input("Press enter to continue")
 
         if(len(word)< 30):
             if(current != start_state and current != comment_state):
