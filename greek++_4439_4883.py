@@ -314,10 +314,313 @@ def lex():
 
     return resultLex
 
+'''
 while(1):
     lexres = lex()
     if(lexres[0] == EOF_tk):
         break
     print(lexres)
+'''
 
+def syntax():
+    global line
+    global res
+
+    def program():
+        global line 
+        global res
+
+        if(res[0] == program_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+                programblock()
+            
+            else:
+                print("Error: There is no name for the program", line)
+                exit(-1)
+        else:
+            print("Error: There is not the keyword 'πρόγραμμα' at the start", line)
+            exit(-1)
+    
+    def programblock():
+        global line
+        global res
+
+        declarations()
+
+        subprograms()
+
+        if(res[0] == begin_program_tk):
+            res = lex()
+            line = res[2]
+
+            sequence()
+
+            if(res[0] == end_program_tk):
+                res = lex()
+                line = res[2]
+            
+            else:
+                print("Error: There is not the keyword 'τέλος_πρόγραμματος' at the end", line)
+                exit(-1)
+        else:
+            print("Error: There is not the keyword 'αρχή_πρόγραμματος' at the beginning.", line)
+            exit(-1)
+    
+    def declarations():
+        global line
+        global res
+
+        while(res[0] == declare_tk):
+            res = lex()
+            line = res[2]
+
+            varlist()
+
+    def varlist():
+        global line
+        global res
+
+        if(res[0] == identifier_tk):
+            res = lex()
+            line = res[2]
+
+            while(res[0] == coma_tk):
+                res = lex()
+                line = res[2]
+
+                if(res[0] == identifier_tk):
+                    res = lex()
+                    line = res[2]
+                
+                else:  
+                    print("Error: There is no identifier after the ,", line)
+                    exit(-1)
+
+        else:
+            print("Error: There is no identifier in the beginning.", line)
+            exit(-1)
+
+    def subprograms():
+        global line
+        global res
+
+        while(res[0] == function_tk or res[0] == procedure_tk):
+
+            if(res[0] == function_tk):
+                func()
+
+            else:
+                proc()
+
+    def func():
+        global line
+        global res
+
+        if(res[0] == function_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+                if(res[0] == left_parenthesis_tk):
+                    res = lex()
+                    line = res[2]
+
+                    formalparlist()
+
+                    if(res[0] == right_parenthesis_tk):
+                        res = lex()
+                        line = res[2]
+
+                        funcblock()
+
+                    else:
+                        print("Error: There is no ) at the end of the function.", line)
+                        exit(-1)
+
+                else:
+                    print("Error: There is no ( at the function.", line)
+                    exit(-1)
+
+            else:
+                print("Error: There is no name for the function.", line)
+                exit(-1)
+
+
+    def proc():
+        global line
+        global res 
+
+        if(res[0] == procedure_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+                if(res[0] == left_parenthesis_tk):
+                    res = lex()
+                    line = res[2]
+
+                    formalparlist()
+
+                    if(res[0] == right_parenthesis_tk):
+                        res = lex[0]
+                        line = res[2]
+
+                        procblock()
+
+                    else:
+                        print("Error: There is no ) at the end.", line)
+                        exit(-1)
+
+                else:
+                    print("Error: There is no ( at the beginning.", line)
+                    exit(-1)
+
+            else: 
+                print("Error: There is no name for the procedure.", line)
+                exit(-1)
+
+    def formalparlist():
+        global line
+        global res
+
+        if(res[0] == identifier_tk):
+            varlist()
+    
+    def funcblock():
+        global line
+        global res
+
+        if(res[0] == interface_tk):
+            res = lex()
+            line = res[2]
+
+            funcinput()
+            funcoutput()
+            declarations()
+
+            if(res[0] == begin_function_tk):
+                res = lex()
+                line = res[2]
+
+                sequence()
+
+                if(res[0] == end_function_tk):
+                    res = lex()
+                    line = res[2]
+
+                else:
+                    print("Error: There is not the keyword 'τέλος_συνάρτησης'.", line)
+                    exit(-1)
+
+            else:
+                print("Error: There is not the keyword 'αρχή_συνάρτησης'.", line)
+                exit(-1)
+
+        else:
+            print("Error: There is not the keyword 'διαπροσωπεα'.", line)
+            exit(-1)
+
+    def procblock():
+        global line
+        global res
+
+        if(res[0] == interface_tk):
+            res = lex()
+            line = res[2]
+
+            fuckinput()
+            funcoutput()
+            declarations()
+
+            if(res[0] == begin_procedure_tk):
+                res = lex()
+                line = res[2]
+
+                sequence()
+
+                if(res[0] == end_procedure_tk):
+                    res = lex()
+                    line = res[2]
+
+                else:
+                    print("Error: There is not the keyword 'τέλος_συνάρτησης'.", line)
+                    exit(-1)
+
+            else:
+                print("Error: There is not the keyword 'αρχή_συνάρτησης'.", line)
+                exit(-1)
+
+        else:
+            print("Error: There is not the keyword 'διαπροσωπεα'.", line)
+            exit(-1)
+
+    def funcinput():
+        global line
+        global res
+
+        if(res[0] == input_tk):
+            res = lex()
+            line = res[2]
+
+            varlist()
+
+    def funcoutput():
+        global line
+        global res
+
+        if(res[0] == output_tk):
+            res = lex()
+            line = res[2]
+
+            varlist()
+
+    def sequence():
+        global line
+        global res
+
+        statement()
+
+        while(res[0] == semicolon_tk):
+            res = lex()
+            line = res[0]
+
+            statement()
+    
+    def statement():
+        global line
+        global res
+
+        if(res[0] == identifier_tk):
+            assignnment_stat()
+        elif(res[0] == if_tk):
+            if_stat()
+        elif(res[0] == while_tk):
+            while_stat()
+        elif(res[0] == repeat_tk):
+            do_stat()
+        elif(res[0] == for_tk):
+            for_stat()
+        elif(res[0] == read_tk):
+            input_stat()
+        elif(res[0] == write_tk):
+            print_stat()
+        elif(res[0] == execute_tk):
+            call_stat()
+        else:
+            print("Error: The command is not recognized.", line)
+            exit(-1)
+
+        
 
