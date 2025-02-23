@@ -10,7 +10,7 @@ alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
 
 noumera =['0','1','2','3','4','5','6','7','8','9']
 
-file = open("test.gre",'r',encoding='utf-8')
+file = open(sys.argv[1],'r',encoding='utf-8')
 
 space = 0
 letters = 1
@@ -314,13 +314,13 @@ def lex():
 
     return resultLex
 
-
+'''
 while(1):
     lexres = lex()
     if(lexres[0] == EOF_tk):
         break
     print(lexres)
-
+'''
 
 def syntax():
     global line
@@ -474,7 +474,7 @@ def syntax():
                     formalparlist()
 
                     if(res[0] == right_parenthesis_tk):
-                        res = lex[0]
+                        res = lex()
                         line = res[2]
 
                         procblock()
@@ -974,8 +974,6 @@ def syntax():
 
         term()
 
-        term()
-
         while(res[0] == plus_tk or res[0] == minus_tk):
             res = lex()
             line = res[2]
@@ -1019,10 +1017,11 @@ def syntax():
                 print("Error: There is no ')' at the end. ", line)
                 exit(-1)
         elif(res[0] == identifier_tk):
+            #print(res[1])
             res = lex()
             line = res[2]
-            print (res[0])
-            print("I'm here.")
+            #print (res[0])
+            #print("I'm here.")
             idtail()
         else:
             print("Error: There is no variable or constant or expression. ", line)
@@ -1081,9 +1080,7 @@ def syntax():
         global res
 
         if(res[0] == plus_tk or res[0] == minus_tk):
-            res = lex()
-            line = res[2]
-
+            
             add_oper()
 
     res = lex()
