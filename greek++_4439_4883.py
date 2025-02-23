@@ -314,13 +314,13 @@ def lex():
 
     return resultLex
 
-'''
+
 while(1):
     lexres = lex()
     if(lexres[0] == EOF_tk):
         break
     print(lexres)
-'''
+
 
 def syntax():
     global line
@@ -540,7 +540,7 @@ def syntax():
             res = lex()
             line = res[2]
 
-            fuckinput()
+            funcinput()
             funcoutput()
             declarations()
 
@@ -603,7 +603,7 @@ def syntax():
         global res
 
         if(res[0] == identifier_tk):
-            assignnment_stat()
+            assignment_stat()
         elif(res[0] == if_tk):
             if_stat()
         elif(res[0] == while_tk):
@@ -622,5 +622,485 @@ def syntax():
             print("Error: The command is not recognized.", line)
             exit(-1)
 
+    def assignment_stat():
+        global line
+        global res
+
+        if(res[0] == identifier_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == assign_tk):
+                res = lex()
+                line = res[2]
+
+                expression()
+
+            else:
+                print("Error: There is no := after the variable.", line)
+                exit(-1)
+
+    def if_stat():
+        global line
+        global res
+
+        if(res[0] == if_tk):
+            res = lex()
+            line = res[2]
+
+            condition()
+
+            if(res[0] == then_tk):
+                res = lex()
+                line = res[2]
+
+                sequence()
+
+                elsepart()
+
+                if(res[0] == end_if_tk):
+                    res = lex()
+                    line = res[2]
+
+                else:
+                    print("Error: There is no 'εάν_τέλος' at the end of the if statement.", line)
+                    exit(-1)
+            
+            else:
+                print("Error: There is no 'τότε' after the if statement.", line)
+                exit(-1)
+
+    def elsepart():
+        global line
+        global res
+
+        if(res[0] == else_tk):
+            res = lex()
+            line = res[2]
+
+            sequence()
+    
+    def while_stat():
+        global line
+        global res
+
+        if(res[0] == while_tk):
+            res = lex()
+            line = res[2]
+
+            condition()
+
+            if(res[0] == repeat_tk):
+                res = lex()
+                line = res[2]
+
+                sequence()
+
+                if(res[0] == end_while_tk):
+                    res = lex()
+                    line = res[2]
+
+                else:
+                    print("Error: There is no 'όσο_τέλος' at the end.", line)
+                    exit(-1)
+
+            else:
+                print("Error: There is no 'επανάλαβε' after the while.", line)
+                exit(-1)
+
+
+    def do_stat():
+        global line
+        global res
+
+        if(res[0] == repeat_tk):
+            res = lex()
+            line = res[2]
+
+            sequence()
+            
+            if(res[0] == until_tk):
+                res = lex()
+                line = res[2]
+
+                condition()
+
+            else:
+                print("Error: These is no 'μέχρι' at the end.", line)
+                exit(-1)
+
+    def for_stat():
+        global line
+        global res
+
+        if(res[0] == for_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+                if(res[0] == assign_tk):
+                    res = lex()
+                    line = res[2]
+
+                    expression()
+
+                    if(res[0] == to_tk):
+                        res = lex()
+                        line = res[2]
+
+                        expression()
+                        
+                        step()
+
+                        if(res[0] == repeat_tk):
+                            res = lex()
+                            line = res[2]
+
+                            sequence()
+
+                            if(res[0] == end_for_tk):
+                                res = lex()
+                                line = res[2]
+
+                            else:
+                                print("Error: There is no 'για_τέλος' at the end. ", line)
+                                exit(-1)
+
+                        else:
+                            print("Error: There is no 'επανάλαβε' at the end. ", line)
+                            exit(-1)
+                    else:
+                        print("Error: There is no 'έως' after the for statement. ", line)
+                        exit(-1)
+                else:
+                    print("Error: There is no := . ", line)
+                    exit(-1)
+            else:
+                print("Error: There is no variable after the for statement. ", line)
+                exit(-1)
+
+
+    def step():
+        global line
+        global res
+
+        if(res[0] == with_step_tk):
+            res = lex()
+            line = res[2]
+
+            expression()
+    
+
+    def print_stat():
+        global line
+        global res
+
+        if(res[0] == write_tk):
+            res = lex()
+            line = res[2]
+
+            expression()
+
+    def input_stat():
+        global line
+        global res
+
+        if(res[0] == read_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+            else:
+                print("Error: There is no variable after 'διάβασε'. ", line)
+                exit(-1)
+
+    def call_stat():
+        global line
+        global res
+
+        if(res[0] == execute_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+                idtail()
+
+            else:
+                print("Error: There is no identifier after 'εκτέλεσε'. ", line)
+                exit(-1)
+
+    def idtail():
+        global line
+        global res
+        if(res[0] == left_parenthesis_tk):
+
+            actualpars()
+
+    def actualpars():
+        global line
+        global res
+
+        if(res[0] == left_parenthesis_tk):
+            res = lex()
+            line = res[2]
+
+            actualparlist()
+
+            if(res[0] == right_parenthesis_tk):
+                res = lex()
+                line = res[2]
+
+            else:
+                print("Error: There is no ')' at the end. ", line)
+                exit(-1)
+
+    def actualparlist():
+        global line
+        global res
+
+        actualparitem()
+
+        while(res[0] == coma_tk):
+            res = lex()
+            line = res[2]
+
+            actualparitem()
+
+    def actualparitem():
+        global line
+        global res
+
+        if(res[0] == modu_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == identifier_tk):
+                res = lex()
+                line = res[2]
+
+            else:
+                print("Error: There is no identifier. ", line)
+                exit(-1)
+
+        else:
+
+            expression()
+
+    def condition():
+        global line
+        global res
+
+        boolterm()
+
+        while(res[0] == or_tk):
+            res = lex()
+            line = res[2]
+
+            boolterm()
+
+    def boolterm():
+        global line
+        global res
+
+        boolfactor()
+
+        while(res[0] == and_tk):
+            res = lex()
+            line = res[2]
+
+            boolfactor()
+
+    def boolfactor():
+        global line
+        global res
+
+        if(res[0] == not_tk):
+            res = lex()
+            line = res[2]
+
+            if(res[0] == left_bracket_tk):
+                res = lex()
+                line = res[2]
+
+                condition()
+
+                if(res[0] == right_bracket_tk):
+                    res = lex()
+                    line = res[2]
+
+                else:
+                    print("Error: There is no ']' at the end. ", line)
+                    exit(-1)
+            else:
+                print("Error: There is no '[' at the start. ", line)
+                exit(-1)
+
+        elif(res[0] == left_bracket_tk):
+            res = lex()
+            line = res[2]
+
+            condition()
+
+            if(res[0] == right_bracket_tk):
+                res = lex()
+                line = res[2]
+
+            else:
+                print("Error: There is no ']' at the end. ", line)
+                exit(-1)
+
+        else:
+
+            expression()
+
+            relational_oper()
+
+            expression()
+
+    def expression():
+        global line
+        global res
+
+        optional_sign()
+
+        term()
+
+        term()
+
+        while(res[0] == plus_tk or res[0] == minus_tk):
+            res = lex()
+            line = res[2]
+
+            add_oper()
+
+            term()
+    
+    def term():
+        global line
+        global res
+
+        factor()
+
+        while(res[0] == multi_tk or res[0] == div_tk):
+            res = lex()
+            line = res[2]
+
+            mul_oper()
+
+            factor()
+
+    def factor():
+        global line 
+        global res 
+
+        if(res[0] == number_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == left_parenthesis_tk):
+            res = lex()
+            line = res[2]
+
+            expression()
+
+            if(res[0] == right_parenthesis_tk):
+                res = lex()
+                line = res[2]
+
+            else:
+                print("Error: There is no ')' at the end. ", line)
+                exit(-1)
+        elif(res[0] == identifier_tk):
+            res = lex()
+            line = res[2]
+            print (res[0])
+            print("I'm here.")
+            idtail()
+        else:
+            print("Error: There is no variable or constant or expression. ", line)
+            exit(-1)
+
+    def relational_oper():
+        global line
+        global res
+
+        if(res[0] == equal_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == lessOrEqual_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == greaterOrEqual_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == different_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == less_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == greater_tk):
+            res = lex()
+            line = res[2]
+        else:
+            print("Error: There is no relational operator. ", line)
+            exit(-1)
+
+    def add_oper():
+        global line 
+        global res
+
+        if(res[0] == plus_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == minus_tk):
+            res = lex()
+            line = res[2]
+    
+    def mul_oper():
+        global line
+        global res
+
+        if(res[0] == multi_tk):
+            res = lex()
+            line = res[2]
+        elif(res[0] == div_tk):
+            res = lex()
+            line = res[2]
+    
+    def optional_sign():
+        global line
+        global res
+
+        if(res[0] == plus_tk or res[0] == minus_tk):
+            res = lex()
+            line = res[2]
+
+            add_oper()
+
+    res = lex()
+    line = res[2]
+    program()
+
+
+syntax()
+
+print("OK")
+
+
+       
+
+                        
+
+
+        
         
 
