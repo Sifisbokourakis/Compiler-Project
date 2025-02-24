@@ -366,7 +366,7 @@ def syntax():
                 line = res[2]
             
             else:
-                print("Error: There is not the keyword 'τέλος_πρόγραμματος' at the end", line)
+                print("Error: There is not the keyword 'τέλος_προγράμματος' at the end", line)
                 exit(-1)
         else:
             print("Error: There is not the keyword 'αρχή_πρόγραμματος' at the beginning.", line)
