@@ -509,6 +509,7 @@ def syntax():
             funcinput()
             funcoutput()
             declarations()
+            subprograms()
 
             if(res[0] == begin_function_tk):
                 res = lex()
@@ -543,6 +544,7 @@ def syntax():
             funcinput()
             funcoutput()
             declarations()
+            subprograms()
 
             if(res[0] == begin_procedure_tk):
                 res = lex()
