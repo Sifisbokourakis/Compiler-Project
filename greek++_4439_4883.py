@@ -1084,10 +1084,38 @@ def syntax():
         if(res[0] == plus_tk or res[0] == minus_tk):
             
             add_oper()
-
+    
     res = lex()
     line = res[2]
     program()
+
+
+#endiamesos kodikas1
+global quadLst 
+quadLst = []
+counter =1 
+
+def nextQuad():
+    global counter
+    return counter
+
+def genQuad(op,x,y,z):
+    global counter
+    global quadLst
+    quads = []
+    quads += [nextQuad()] + [op] + [x] + [y] + [z]
+
+    counter += 1
+    quadLst += [quads]
+    return quads
+
+
+
+
+
+
+
+
 
 
 syntax()
