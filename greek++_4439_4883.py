@@ -1090,7 +1090,7 @@ def syntax():
     program()
 
 
-#endiamesos kodikas1
+################endiamesos kodikas1#############################################
 global quadLst 
 quadLst = []
 counter =1 
@@ -1109,7 +1109,43 @@ def genQuad(op,x,y,z):
     quadLst += [quads]
     return quads
 
+temp = 1
+def newTemp():
+    global temp
 
+    lst = []
+    lst.append('T_')
+    lst.append(str(temp))
+    tempVar = "".join(lst)
+    temp += 1
+    
+    return tempVar
+
+def emptyList():
+    pointerLst =[]
+
+    return pointerLst
+
+
+def makeList(x):
+    xLst = [x]
+
+    return xLst
+
+def merge(list1,list2):
+    lst = []
+    lst += list1 + list2
+    
+    return lst
+
+def backPatch(list,z):
+     global quadLst
+
+     for num in list:
+         for quad in quadLst:
+             if num == quad[0]:
+                 quad[4] = z
+                 break
 
 
 
