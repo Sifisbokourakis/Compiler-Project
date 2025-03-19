@@ -1088,9 +1088,11 @@ def syntax():
         if(res[0] == plus_tk):
             res = lex()
             line = res[2]
+            return '+'
         elif(res[0] == minus_tk):
             res = lex()
             line = res[2]
+            return '-'
     
     def mul_oper():
         global line
@@ -1099,9 +1101,11 @@ def syntax():
         if(res[0] == multi_tk):
             res = lex()
             line = res[2]
+            return '*'
         elif(res[0] == div_tk):
             res = lex()
             line = res[2]
+            return '/'
     
     def optional_sign():
         global line
@@ -1199,4 +1203,3 @@ def print_Quads():
 print_Quads()                        
         
         
-
