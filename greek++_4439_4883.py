@@ -1029,28 +1029,34 @@ def syntax():
         global res 
 
         if(res[0] == number_tk):
+            val = res[1]
             res = lex()
             line = res[2]
+            return val
         elif(res[0] == left_parenthesis_tk):
+            
             res = lex()
             line = res[2]
 
-            expression()
+            val = expression()
 
             if(res[0] == right_parenthesis_tk):
                 res = lex()
                 line = res[2]
+                return val
 
             else:
                 print("Error: There is no ')' at the end. ", line)
                 exit(-1)
         elif(res[0] == identifier_tk):
             #print(res[1])
+            val = res[1]
             res = lex()
             line = res[2]
             #print (res[0])
             #print("I'm here.")
             idtail()
+            return val
         else:
             print("Error: There is no variable or constant or expression. ", line)
             exit(-1)
