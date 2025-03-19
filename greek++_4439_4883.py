@@ -629,6 +629,8 @@ def syntax():
         global res
 
         if(res[0] == identifier_tk):
+            id = res[1]
+
             res = lex()
             line = res[2]
 
@@ -636,7 +638,8 @@ def syntax():
                 res = lex()
                 line = res[2]
 
-                expression()
+                Eplace = expression()
+                genQuad(':=', Eplace, '_', id)
 
             else:
                 print("Error: There is no := after the variable.", line)
@@ -804,7 +807,8 @@ def syntax():
             res = lex()
             line = res[2]
 
-            expression()
+            Eplace = expression()
+            genQuad('out', Eplace, '_', '_')
 
     def input_stat():
         global line
@@ -815,8 +819,12 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                id = res[1]
+
                 res = lex()
                 line = res[2]
+
+                genQuad('inp', id, '_', '_')
 
             else:
                 print("Error: There is no variable after 'διάβασε'. ", line)
@@ -974,30 +982,48 @@ def syntax():
 
         optional_sign()
 
-        term()
+        T1place = term()
 
         while(res[0] == plus_tk or res[0] == minus_tk):
-            res = lex()
-            line = res[2]
+            plusOrMinus = add_oper()
 
-            add_oper()
+            T2place = term()
+            w = newTemp()
+            genQuad(plusOrMinus, T1place, T2place, w)
+            #res = lex()
+            #line = res[2]
 
-            term()
+            #add_oper()
+
+            T1place = w
+
+        Eplace = T1place
+        return Eplace
+            
     
     def term():
         global line
         global res
 
-        factor()
+        F1place = factor()
 
         while(res[0] == multi_tk or res[0] == div_tk):
-            res = lex()
-            line = res[2]
+            mulOrDiv = mul_oper()
+            
+            F2place = factor()
+            w = newTemp()
+            genQuad(mulOrDiv, F1place, F2place, w)
+            F1place = w
+            #res = lex()
+            #line = res[2]
 
-            mul_oper()
+            #mul_oper()
 
-            factor()
+            #factor()
 
+        Tplace = F1place
+        return Tplace
+    
     def factor():
         global line 
         global res 
@@ -1103,7 +1129,8 @@ def genQuad(op,x,y,z):
     global counter
     global quadLst
     quads = []
-    quads += [nextQuad()] + [op] + [x] + [y] + [z]
+    quads = [nextQuad()] 
+    quads += [op] + [x] + [y] + [z]
 
     counter += 1
     quadLst += [quads]
@@ -1141,12 +1168,17 @@ def merge(list1,list2):
 def backPatch(list,z):
      global quadLst
 
+     for i in range(len(list)):
+         for j in range(len(quadLst)):
+             if(list[1] == quadLst[j][0] and quadLst[j][4] == '_'):
+                 quadLst[j][4] = z
+'''
      for num in list:
-         for quad in quadLst:
+         for quad in quadLst: 
              if num == quad[0]:
                  quad[4] = z
                  break
-
+'''
 
 
 
@@ -1160,10 +1192,11 @@ print("OK")
 
 
        
+def print_Quads():
+    for i in range(len(quadLst)):
+        print(str(quadLst[i][0])+" "+str(quadLst[i][1])+" "+str(quadLst[i][2])+" "+str(quadLst[i][3])+" "+str(quadLst[i][4]))
 
-                        
-
-
+print_Quads()                        
         
         
 
