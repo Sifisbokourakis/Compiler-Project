@@ -909,25 +909,47 @@ def syntax():
         global line
         global res
 
-        boolterm()
+        BT1 = boolterm()
+
+        trueCon = BT1[0]
+        falseCon = BT1[1]
+
 
         while(res[0] == or_tk):
             res = lex()
             line = res[2]
 
-            boolterm()
+            backPatch(falseCon,nextQuad())
+
+            BT2 = boolterm()
+            trueCon = merge(trueCon,BT2[0])
+            falseCon = BT2[1]
+        return trueCon,falseCon
 
     def boolterm():
         global line
         global res
 
-        boolfactor()
+        BF1 = boolfactor()
+
+        BTtrue = BF1[0] #list1
+        BTfalse = BF1[1] #list2
+
 
         while(res[0] == and_tk):
             res = lex()
             line = res[2]
 
-            boolfactor()
+            backPatch(BTtrue,nextQuad()) #one quad if it's true
+
+            BF2 = boolfactor()
+
+            BTfalse = merge(BTfalse,BF2[1]) #jump quad
+            BTtrue = BF2[0]
+
+
+           # boolfactor()
+        return BTtrue , BTfalse
 
     def boolfactor():
         global line
@@ -941,7 +963,11 @@ def syntax():
                 res = lex()
                 line = res[2]
 
-                condition()
+                con = condition()
+
+                BFtrue = con[1]
+                BFfalse = con[0]
+
 
                 if(res[0] == right_bracket_tk):
                     res = lex()
@@ -958,7 +984,10 @@ def syntax():
             res = lex()
             line = res[2]
 
-            condition()
+            con = condition()
+
+            BFtrue = con[0]
+            BFfalse = con[1]
 
             if(res[0] == right_bracket_tk):
                 res = lex()
@@ -970,11 +999,16 @@ def syntax():
 
         else:
 
-            expression()
+           Eplace1 = expression()
 
-            relational_oper()
+           relop =  relational_oper()
 
-            expression()
+           Eplace2 =  expression()
+           BFtrue = makeList(nextQuad())
+           genQuad(relop,Eplace1,Eplace2,'_')
+           BFfalse=makeList(nextQuad())
+           genQuad('jump', '_', '_', '_')
+        return BFtrue,BFfalse
 
     def expression():
         global line
