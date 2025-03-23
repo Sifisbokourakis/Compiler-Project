@@ -10,7 +10,8 @@ alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
 
 noumera =['0','1','2','3','4','5','6','7','8','9']
 
-file = open(sys.argv[1],'r',encoding='utf-8')
+#file = open(sys.argv[1],'r',encoding='utf-8')
+file = open('check2.gre', 'r', encoding='utf-8')
 
 space = 0
 letters = 1
@@ -653,7 +654,8 @@ def syntax():
             res = lex()
             line = res[2]
 
-            condition()
+            c =condition()
+            backPatch(c[0], nextQuad())
 
             if(res[0] == then_tk):
                 res = lex()
@@ -661,7 +663,13 @@ def syntax():
 
                 sequence()
 
+                ifLst = makeList(nextQuad())
+                genQuad('jump', '_', '_', '_')
+                backPatch(c[1], nextQuad())
+
                 elsepart()
+
+                backPatch(ifLst, nextQuad())
 
                 if(res[0] == end_if_tk):
                     res = lex()
@@ -693,13 +701,20 @@ def syntax():
             res = lex()
             line = res[2]
 
-            condition()
+            cQ = nextQuad()
+
+            c = condition()
+
+            backPatch(c[0], nextQuad())
 
             if(res[0] == repeat_tk):
                 res = lex()
                 line = res[2]
 
                 sequence()
+
+                genQuad('jump', '_', '_', cQ)
+                backPatch(c[1], nextQuad())
 
                 if(res[0] == end_while_tk):
                     res = lex()
@@ -722,13 +737,18 @@ def syntax():
             res = lex()
             line = res[2]
 
+            cQ = nextQuad()
+
             sequence()
             
             if(res[0] == until_tk):
                 res = lex()
                 line = res[2]
 
-                condition()
+                c = condition()
+
+                backPatch(c[1], cQ)
+                backPatch(c[0], nextQuad())
 
             else:
                 print("Error: These is no 'μέχρι' at the end.", line)
@@ -839,22 +859,31 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                idName = res[1]
+
                 res = lex()
                 line = res[2]
 
-                idtail()
+                idtail(idName, 0)
+                genQuad('call', idName, '_', '_')
 
             else:
                 print("Error: There is no identifier after 'εκτέλεσε'. ", line)
                 exit(-1)
 
-    def idtail():
+    def idtail(name, called):
         global line
         global res
         if(res[0] == left_parenthesis_tk):
-
             actualpars()
 
+            if(called == 1):
+                w = newTemp()
+                genQuad('par', w, 'RET', '_')
+                genQuad('call', name, '_', '_')
+                return w
+            else:
+                return name
     def actualpars():
         global line
         global res
@@ -894,16 +923,21 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                name = res[1]
+
                 res = lex()
                 line = res[2]
+
+                genQuad('par', name, 'REF', '_')
 
             else:
                 print("Error: There is no identifier. ", line)
                 exit(-1)
 
         else:
-
-            expression()
+            
+            thExpre = expression()
+            genQuad('par', thExpre, 'CV', '_')
 
     def condition():
         global line
@@ -1089,7 +1123,7 @@ def syntax():
             line = res[2]
             #print (res[0])
             #print("I'm here.")
-            idtail()
+            idtail(val, 1)
             return val
         else:
             print("Error: There is no variable or constant or expression. ", line)
@@ -1100,27 +1134,45 @@ def syntax():
         global res
 
         if(res[0] == equal_tk):
+            relatOp = res[1]
+
             res = lex()
             line = res[2]
+
         elif(res[0] == lessOrEqual_tk):
+            relatOp = res[1]
+
             res = lex()
-            line = res[2]
+            line = res[2]\
+
         elif(res[0] == greaterOrEqual_tk):
+            relatOp = res[1]
+
             res = lex()
             line = res[2]
+
         elif(res[0] == different_tk):
+            relatOp = res[1]
+
             res = lex()
             line = res[2]
+
         elif(res[0] == less_tk):
+            relatOp = res[1]
+
             res = lex()
             line = res[2]
+
         elif(res[0] == greater_tk):
+            relatOp = res[1]
+
             res = lex()
             line = res[2]
         else:
             print("Error: There is no relational operator. ", line)
             exit(-1)
-
+        return relatOp
+    
     def add_oper():
         global line 
         global res
@@ -1210,12 +1262,14 @@ def merge(list1,list2):
     return lst
 
 def backPatch(list,z):
-     global quadLst
+    global quadLst
 
-     for i in range(len(list)):
+    for i in range(len(list)):
          for j in range(len(quadLst)):
              if(list[1] == quadLst[j][0] and quadLst[j][4] == '_'):
                  quadLst[j][4] = z
+                 break
+    return
 '''
      for num in list:
          for quad in quadLst: 
