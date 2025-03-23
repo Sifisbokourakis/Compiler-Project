@@ -336,10 +336,12 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                id = res[1]
+
                 res = lex()
                 line = res[2]
 
-                programblock()
+                programblock(id)
             
             else:
                 print("Error: There is no name for the program", line)
@@ -348,7 +350,7 @@ def syntax():
             print("Error: There is not the keyword 'πρόγραμμα' at the start", line)
             exit(-1)
     
-    def programblock():
+    def programblock(name):
         global line
         global res
 
@@ -360,7 +362,11 @@ def syntax():
             res = lex()
             line = res[2]
 
+            genQuad('begin_block', name, '_', '_')
             sequence()
+            genQuad('halt', '_', '_', '_')
+            genQuad('end_block', name, '_', '_')
+
 
             if(res[0] == end_program_tk):
                 res = lex()
@@ -428,6 +434,8 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                id = res[1]
+
                 res = lex()
                 line = res[2]
 
@@ -441,7 +449,7 @@ def syntax():
                         res = lex()
                         line = res[2]
 
-                        funcblock()
+                        funcblock(id)
 
                     else:
                         print("Error: There is no ) at the end of the function.", line)
@@ -465,6 +473,8 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                id = res[1]
+
                 res = lex()
                 line = res[2]
 
@@ -478,7 +488,7 @@ def syntax():
                         res = lex()
                         line = res[2]
 
-                        procblock()
+                        procblock(id)
 
                     else:
                         print("Error: There is no ) at the end.", line)
@@ -499,7 +509,7 @@ def syntax():
         if(res[0] == identifier_tk):
             varlist()
     
-    def funcblock():
+    def funcblock(name):
         global line
         global res
 
@@ -516,7 +526,9 @@ def syntax():
                 res = lex()
                 line = res[2]
 
+                genQuad('begin_block', name, '_', '_')
                 sequence()
+                genQuad('end_block', name, '_', '_')
 
                 if(res[0] == end_function_tk):
                     res = lex()
@@ -534,7 +546,7 @@ def syntax():
             print("Error: There is not the keyword 'διαπροσωπεα'.", line)
             exit(-1)
 
-    def procblock():
+    def procblock(name):
         global line
         global res
 
@@ -551,7 +563,9 @@ def syntax():
                 res = lex()
                 line = res[2]
 
+                genQuad('begin_block', name, '_', '_')
                 sequence()
+                genQuad('end_block', name, '_', '_')
 
                 if(res[0] == end_procedure_tk):
                     res = lex()
@@ -816,7 +830,11 @@ def syntax():
             res = lex()
             line = res[2]
 
-            expression()
+            Eplace3 = expression()
+            return Eplace3
+
+        else:
+            return '1'
     
 
     def print_stat():
@@ -1278,22 +1296,36 @@ def backPatch(list,z):
                  break
 '''
 
+def intCode(intF):
+    for i in range(len(quadLst)):
+        qd = quadLst[i]
+        intF.write(str(qd[0]))
+        intF.write(": ")
+        intF.write(str(qd[1]))
+        intF.write(" ")
+        intF.write(str(qd[2]))
+        intF.write(" ")
+        intF.write(str(qd[3]))
+        intF.write(" ")
+        intF.write(str(qd[4]))
+        intF.write("\n")
 
-
-
-
-
+intFile = open('intFile.int', 'w')
 
 syntax()
 
 print("OK")
 
+intCode(intFile)
 
-       
+intFile.close()
+
+
+'''    
 def print_Quads():
     for i in range(len(quadLst)):
         print(str(quadLst[i][0])+" "+str(quadLst[i][1])+" "+str(quadLst[i][2])+" "+str(quadLst[i][3])+" "+str(quadLst[i][4]))
 
 print_Quads()                        
-        
+'''        
         
