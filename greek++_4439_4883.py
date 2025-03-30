@@ -777,6 +777,8 @@ def syntax():
             line = res[2]
 
             if(res[0] == identifier_tk):
+                id = res[1]
+
                 res = lex()
                 line = res[2]
 
@@ -784,21 +786,54 @@ def syntax():
                     res = lex()
                     line = res[2]
 
-                    expression()
+                    Eplace1 = expression()
+                    genQuad(':=', Eplace1, '_', id)
 
                     if(res[0] == to_tk):
                         res = lex()
                         line = res[2]
 
-                        expression()
+                        Eplace2 = expression()
                         
-                        step()
+                        stp = step()
+
+                        CQ = nextQuad()
+
+                        L_ex_pos = makeList(nextQuad())
+                        genQuad('>', stp, '0', '_')
+                        L_ex_neg = makeList(nextQuad())
+                        genQuad('<', stp, '0', '_')
+                        L_ex_zero = makeList(nextQuad())
+                        genQuad('=', stp, '0', '_')
+
+                        backPatch(L_ex_pos, nextQuad())
+                        L_ch_pos_out = makeList(nextQuad())
+                        genQuad('>=', id, Eplace2, '_')
+                        L_ch_pos_in = makeList(nextQuad())
+                        genQuad('jump', '_', '_', '_')
+
+                        backPatch(L_ex_neg, nextQuad())
+                        L_ch_neg_out = makeList(nextQuad())
+                        genQuad('<=', id, Eplace2, '_')
+                        L_ch_neg_in = makeList(nextQuad())
+                        genQuad('jump', '_', '_', '_')
+
+                        backPatch(L_ex_zero, nextQuad())
 
                         if(res[0] == repeat_tk):
                             res = lex()
                             line = res[2]
 
+                            backPatch(L_ch_pos_in, nextQuad())
+                            backPatch(L_ch_neg_in, nextQuad())
+
                             sequence()
+
+                            genQuad('+', id, stp, id)
+                            genQuad('jumpo', '_', '_', CQ)
+
+                            backPatch(L_ch_pos_out, nextQuad())
+                            backPatch(L_ch_neg_out, nextQuad())
 
                             if(res[0] == end_for_tk):
                                 res = lex()
@@ -1310,7 +1345,7 @@ def intCode(intF):
         intF.write(str(qd[4]))
         intF.write("\n")
 
-intFile = open('intFile.int', 'w')
+intFile = open('intFile2.int', 'w')
 
 syntax()
 
