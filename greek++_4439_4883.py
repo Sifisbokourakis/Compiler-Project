@@ -830,7 +830,7 @@ def syntax():
                             sequence()
 
                             genQuad('+', id, stp, id)
-                            genQuad('jumpo', '_', '_', CQ)
+                            genQuad('jump', '_', '_', CQ)
 
                             backPatch(L_ch_pos_out, nextQuad())
                             backPatch(L_ch_neg_out, nextQuad())
