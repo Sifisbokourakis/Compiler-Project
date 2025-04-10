@@ -322,7 +322,124 @@ while(1):
         break
     print(lexres)
 '''
+class Argument():
+    def __init__(self):
+        self.name = ''
+        self.type = 'Int'
+        self.parMode = ''
 
+class Entity():
+    def __init__(self):
+        self.name = ''
+        self.type = ''
+        self.variable = self.Variable()
+        self.subprogram = self.SubProgram()
+        self.parameter = self.Parameter()
+        self.tempVar = self.TempVar()
+
+    class Variable:
+        def __init__(self):
+            self.type = 'Int'
+            self.offset = 0
+    class SubProgram:
+        def __init__(self):
+            self.type = ''
+            self.startQuad = 0
+            self.frameLength = 0
+            self.argumentList = []
+    class Parameter:
+        def __init__(self):
+            self.mode = ''
+            self.offset = 0
+    class TempVar:
+        def __init__(self):
+            self.type = 'Int'
+            self.offset = 0
+class Scope():
+    def __init__(self):
+        self.name = ''
+        self.entityList = []
+        self.nestingLevel = 0
+scopeList = []
+
+def new_argument(object):
+    global scopeList
+
+    scopeList[-1].entityList[-1].subrogram.argumentList.append(object)
+def new_entity(object):
+    global scopeList
+
+    scopeList[-1].entityList.append(object)
+def new_scope(name):
+    global scopeList
+
+    nextScope = Scope()
+    nextScope.name = name
+    if(not scopeList):
+        nextScope.nestingLevel = 0
+    else:
+        nextScope.nestingLevel = scopeList[-1].nestingLevel + 1
+    scopeList.append(nextScope)
+def delete_scope():
+    global scopeList
+
+    freeScope = scopeList.pop()
+    del freeScope
+def compute_offset():
+    global scopeList
+
+    counter = 0
+    if(scopeList[-1].entityList is not []):
+        for ent in (scopeList[-1].entityList):
+            if(ent.type == 'VAR' or ent.type == 'TEMP' or ent.type == 'PARAM'):
+                counter += 1
+    offset = 12+(counter+4)
+
+    return offset
+def compute_startQuad():
+    global scopeList
+
+    scopeList[-2].entityLIst[-1].subprogram.startQuad = nextQuad()
+def compute_framelength():
+    global scopeList
+
+    scopeList[-2].entityList[-1].subprogram.frameLength = compute_offset()
+def add_parameters():
+    global scopeList
+
+    for arg in scopeList[-2].entityList[-1].subrogram.argumentList:
+        ent = Entity()
+        ent.name = arg.name
+        ent.type = 'PARAM'
+        ent.parameter.mode = arg.parMode
+        ent.parameter.offset = compute_offset()
+        new_entity(ent)
+def print_Symbol_table():
+    global scopeList
+    global symFile
+
+    symFile.write("###########################################################")
+    symFile.write('\n')
+
+    for sco in reversed(scopeList):
+        symFile.write("SCOPE: "+"name:"+sco.name+" nestingLevel:"+str(sco.nestingLevel))
+        symFile.write('\n\tENTITIES:\n')
+        for ent in sco.entityList:
+            if(ent.type == 'VAR'):
+                symFile.write('\tENTITY: '+' name:'+ent.name+'\t type:'+ent.type+'\t variable-type:'+ent.tempVar.type+'\t offset:'+str(ent.variable.offset))
+            elif(ent.type == 'TEMP'):
+                symFile.write("\tENTITY: "+" name:"+ent.name+"\t type:"+ent.type+"\t temp-type:"+ent.tempVar.type+"\t offset:"+str(ent.tempVar.offset))
+            elif(ent.type == 'SUBPR'):
+                symFile.write("\tENTITY: "+" name:"+ent.name+"\t type:"+ent.type+"\t subprogram-type:"+ent.subprogram.type+"\t startQuad:"+str(ent.subprogram.startQuad)+"\t frameLength:"+str(ent.subprogram.frameLength))
+                symFile.write("\t\tARGUMENTS:")
+            elif(ent.type == 'PARAM'):
+                symFile.write("\tENTITY: "+" name:"+ent.name+"\t type:"+ent.type+"\t mode:"+ent.parameter.mode+"\t offset:"+str(ent.parameter.offset))
+            symFile.write('\n')
+        symFile.write('\n\n\n')
+    symFile.write('############################################################')
+    symFile.write('\n\n\n\n\n')
+
+    
 def syntax():
     global line
     global res
@@ -367,6 +484,8 @@ def syntax():
             genQuad('halt', '_', '_', '_')
             genQuad('end_block', name, '_', '_')
 
+            print_Symbol_table()
+            delete_scope()
 
             if(res[0] == end_program_tk):
                 res = lex()
@@ -387,23 +506,69 @@ def syntax():
             res = lex()
             line = res[2]
 
-            varlist()
+            varlist(1)
 
-    def varlist():
+    def varlist(flag):
         global line
         global res
 
         if(res[0] == identifier_tk):
+            ide = res[1]
+
             res = lex()
             line = res[2]
+
+            if(flag == 1):
+                ent = Entity()
+                ent.type = 'VAR'
+                ent.name = ide
+                ent.variable.offset = compute_offset()
+                new_entity(ent)
+            elif(flag == 2):
+                arg = Argument()
+                arg.name = ide
+                arg.parMode = ''
+                new_argument(arg)
+            elif(flag == 3):
+                for arg in  scopeList[-1].entityList[-1].subprogram.argumentList:
+                    if(arg.name == ide):
+                        arg.parMode = 'CV'
+            elif(flag == 4):
+                for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
+                    if(arg.name == ide):
+                        arg.parMode = 'REF'
+            
 
             while(res[0] == coma_tk):
                 res = lex()
                 line = res[2]
 
                 if(res[0] == identifier_tk):
+                    ide = res[1]
+
                     res = lex()
                     line = res[2]
+
+                    if(flag == 1):
+                        ent = Entity()
+                        ent.type = 'VAR'
+                        ent.name = ide
+                        ent.variable.offset = compute_offset()
+                        new_entity(ent)
+                    elif(flag == 2):
+                        arg = Argument()
+                        arg.name = ide
+                        arg.parMode = ''
+                        new_argument(arg)
+                    elif(flag == 3):
+                        for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
+                            if(arg.name == ide):
+                                arg.parMode = 'CV'
+                    elif(flag == 4):
+                        for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
+                            if(arg.name == ide):
+                                arg.parMode = 'REF'
+
                 
                 else:  
                     print("Error: There is no identifier after the ,", line)
@@ -442,6 +607,12 @@ def syntax():
                 if(res[0] == left_parenthesis_tk):
                     res = lex()
                     line = res[2]
+
+                    ent = Entity()
+                    ent.type = 'SUBPR'
+                    ent.name = id
+                    ent.subprogram.type = 'Function'
+                    new_entity(ent)
 
                     formalparlist()
 
@@ -482,6 +653,13 @@ def syntax():
                     res = lex()
                     line = res[2]
 
+                    ent = Entity()
+                    ent.type = 'SUBPR'
+                    ent.name = id
+                    ent.subprogram.type = 'Procedure'
+                    new_entity(ent)
+
+
                     formalparlist()
 
                     if(res[0] == right_parenthesis_tk):
@@ -519,6 +697,10 @@ def syntax():
 
             funcinput()
             funcoutput()
+
+            new_scope(name)
+            add_parameters()
+
             declarations()
             subprograms()
 
@@ -526,9 +708,14 @@ def syntax():
                 res = lex()
                 line = res[2]
 
+                compute_startQuad()
                 genQuad('begin_block', name, '_', '_')
                 sequence()
+                compute_framelength()
                 genQuad('end_block', name, '_', '_')
+
+                print_Symbol_table()
+                delete_scope()
 
                 if(res[0] == end_function_tk):
                     res = lex()
@@ -556,6 +743,10 @@ def syntax():
 
             funcinput()
             funcoutput()
+
+            new_scope(name)
+            add_parameters()
+
             declarations()
             subprograms()
 
@@ -563,9 +754,14 @@ def syntax():
                 res = lex()
                 line = res[2]
 
+                compute_startQuad()
                 genQuad('begin_block', name, '_', '_')
                 sequence()
+                compute_framelength
                 genQuad('end_block', name, '_', '_')
+
+                print_Symbol_table()
+                delete_scope()
 
                 if(res[0] == end_procedure_tk):
                     res = lex()
@@ -591,7 +787,7 @@ def syntax():
             res = lex()
             line = res[2]
 
-            varlist()
+            varlist(3)
 
     def funcoutput():
         global line
@@ -601,7 +797,7 @@ def syntax():
             res = lex()
             line = res[2]
 
-            varlist()
+            varlist(4)
 
     def sequence():
         global line
@@ -937,6 +1133,7 @@ def syntax():
                 return w
             else:
                 return name
+            
     def actualpars():
         global line
         global res
@@ -1294,6 +1491,12 @@ def newTemp():
     lst.append(str(temp))
     tempVar = "".join(lst)
     temp += 1
+
+    ent = Entity()
+    ent.type = 'TEMP'
+    ent.name = tempVar
+    ent.tempVar.offset = compute_offset()
+    new_entity(ent)
     
     return tempVar
 
@@ -1346,13 +1549,14 @@ def intCode(intF):
         intF.write("\n")
 
 intFile = open('intFile2.int', 'w')
-
+symFile = open('symFile.sym', 'w')
 syntax()
 
 print("OK")
 
 intCode(intFile)
 
+symFile.close()
 intFile.close()
 
 
