@@ -10,8 +10,8 @@ alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
 
 noumera =['0','1','2','3','4','5','6','7','8','9']
 
-file = open(sys.argv[1],'r',encoding='utf-8')
-#file = open('check2.gre', 'r', encoding='utf-8')
+#file = open(sys.argv[1],'r',encoding='utf-8')
+file = open('check_pinakas.gre', 'r', encoding='utf-8')
 
 space = 0
 letters = 1
@@ -365,7 +365,7 @@ scopeList = []
 def new_argument(object):
     global scopeList
 
-    scopeList[-1].entityList[-1].subrogram.argumentList.append(object)
+    scopeList[-1].entityList[-1].subprogram.argumentList.append(object)
 def new_entity(object):
     global scopeList
 
@@ -393,13 +393,13 @@ def compute_offset():
         for ent in (scopeList[-1].entityList):
             if(ent.type == 'VAR' or ent.type == 'TEMP' or ent.type == 'PARAM'):
                 counter += 1
-    offset = 12+(counter+4)
+    offset = 12+(counter*4)
 
     return offset
 def compute_startQuad():
     global scopeList
 
-    scopeList[-2].entityLIst[-1].subprogram.startQuad = nextQuad()
+    scopeList[-2].entityList[-1].subprogram.startQuad = nextQuad()
 def compute_framelength():
     global scopeList
 
@@ -407,7 +407,7 @@ def compute_framelength():
 def add_parameters():
     global scopeList
 
-    for arg in scopeList[-2].entityList[-1].subrogram.argumentList:
+    for arg in scopeList[-2].entityList[-1].subprogram.argumentList:
         ent = Entity()
         ent.name = arg.name
         ent.type = 'PARAM'
@@ -471,6 +471,8 @@ def syntax():
         global line
         global res
 
+        new_scope(name)
+
         declarations()
 
         subprograms()
@@ -513,7 +515,7 @@ def syntax():
         global res
 
         if(res[0] == identifier_tk):
-            ide = res[1]
+            id = res[1]
 
             res = lex()
             line = res[2]
@@ -521,21 +523,21 @@ def syntax():
             if(flag == 1):
                 ent = Entity()
                 ent.type = 'VAR'
-                ent.name = ide
+                ent.name = id
                 ent.variable.offset = compute_offset()
                 new_entity(ent)
             elif(flag == 2):
                 arg = Argument()
-                arg.name = ide
+                arg.name = id
                 arg.parMode = ''
                 new_argument(arg)
             elif(flag == 3):
                 for arg in  scopeList[-1].entityList[-1].subprogram.argumentList:
-                    if(arg.name == ide):
+                    if(arg.name == id):
                         arg.parMode = 'CV'
             elif(flag == 4):
                 for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
-                    if(arg.name == ide):
+                    if(arg.name == id):
                         arg.parMode = 'REF'
             
 
@@ -544,7 +546,7 @@ def syntax():
                 line = res[2]
 
                 if(res[0] == identifier_tk):
-                    ide = res[1]
+                    id = res[1]
 
                     res = lex()
                     line = res[2]
@@ -552,21 +554,21 @@ def syntax():
                     if(flag == 1):
                         ent = Entity()
                         ent.type = 'VAR'
-                        ent.name = ide
+                        ent.name = id
                         ent.variable.offset = compute_offset()
                         new_entity(ent)
                     elif(flag == 2):
                         arg = Argument()
-                        arg.name = ide
+                        arg.name = id
                         arg.parMode = ''
                         new_argument(arg)
                     elif(flag == 3):
                         for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
-                            if(arg.name == ide):
+                            if(arg.name == id):
                                 arg.parMode = 'CV'
                     elif(flag == 4):
                         for arg in scopeList[-1].entityList[-1].subprogram.argumentList:
-                            if(arg.name == ide):
+                            if(arg.name == id):
                                 arg.parMode = 'REF'
 
                 
@@ -685,7 +687,7 @@ def syntax():
         global res
 
         if(res[0] == identifier_tk):
-            varlist()
+            varlist(2)
     
     def funcblock(name):
         global line
