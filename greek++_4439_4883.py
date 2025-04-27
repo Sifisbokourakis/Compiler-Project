@@ -1489,7 +1489,7 @@ def newTemp():
     global temp
 
     lst = []
-    lst.append('T_')
+    lst.append('T$')
     lst.append(str(temp))
     tempVar = "".join(lst)
     temp += 1
