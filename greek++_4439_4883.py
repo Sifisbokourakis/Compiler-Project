@@ -1,3 +1,5 @@
+#Mpokourakis Iosif 4439 Vasilliki Maria Mpalaska 4883
+
 import sys
 
 alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
@@ -10,8 +12,8 @@ alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
 
 noumera =['0','1','2','3','4','5','6','7','8','9']
 
-#file = open(sys.argv[1],'r',encoding='utf-8')
-file = open('check_pinakas.gre', 'r', encoding='utf-8')
+file = open(sys.argv[1],'r',encoding='utf-8')
+#file = open('check_pinakas.gre', 'r', encoding='utf-8')
 
 space = 0
 letters = 1
