@@ -1,5 +1,6 @@
 #Mpokourakis Iosif 4439 Vasilliki Maria Mpalaska 4883
 
+import os
 import sys
 
 alphabito =['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
@@ -454,7 +455,7 @@ def search_comb(n):
 
 ascFile = open('ascFile.asm', 'w')
 ascFile.write('         \n\n\n')
-
+'''
 def gnlvcode(name):
     global scopeList
     global ascFile
@@ -475,7 +476,7 @@ def gnlvcode(name):
         x=ent1.variable.offset
     
     ascFile.write('addi t0, t0, -%d\n' % (x))
-
+'''
 
 def loadver(v, r):
     global scopeList
@@ -498,13 +499,13 @@ def loadver(v, r):
                 ascFile.write('lw t%d, (t0)\n' % (r))
         elif (sc1.nestingLevel < scopeList[-1].nestingLevel):
             if ent1.type == 'VAR':
-                gnlvcode(v)
+                #gnlvcode(v)
                 ascFile.write('lw t%d, (t0)\n' %(r))
             elif (ent1.type == 'PARAM' and ent1.parameter.mode == 'CV'):
-                gnlvcode(v)
+                #gnlvcode(v)
                 ascFile.write('lw t%d, (t0)\n' % (r))
             elif ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
-                gnlvcode(v)
+                #gnlvcode(v)
                 ascFile.write('lw t0, (t0)\n')
                 ascFile.write('lw t%d, (t0)\n' %(r))
 def storev(r,v):
@@ -519,21 +520,21 @@ def storev(r,v):
         if ent1.type == 'VAR':
             ascFile.write('sw t%d, %d(sp)\n' % (r,ent1.variable.offset))
         elif ent1.type == 'TEMP':
-            ascFile.write('sw t%d, -%d(sp)\n' % (r, ent1.temVar.offset))
+            ascFile.write('sw t%d, -%d(sp)\n' % (r, ent1.tempVar.offset))
         elif ent1.type == 'PARAM' and ent1.parameter.mode == 'CV':
-            ascFile.write('sw t%d,%d(sp)\n' % (r,ent1.add.parameter.offset))
+            ascFile.write('sw t%d,%d(sp)\n' % (r,ent1.parameter.offset))
         elif ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
             ascFile.write('lw t0,-%d(sp)\n' % (ent1.parameter.offset))
             ascFile.write('sw t%d, (t0)\n' % (r))
-    elif sc1.nestinglevel < scopeList[-1].nestingLevel:
+    elif sc1.nestingLevel < scopeList[-1].nestingLevel:
         if ent1.type == 'VAR':
-            gnlvcode(v)
+            #gnlvcode(v)
             ascFile.write('sw t%d,(t0)\n' % (r))
         elif ent1.type == 'PARAM' and ent1.parameter.mode=='CV':
-            gnlvcode(v)
+            #gnlvcode(v)
             ascFile.write('sw t%d, (t0)\n' % (r))
         elif ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
-            gnlvcode(v)
+            #gnlvcode(v)
             ascFile.write('lw t0,(t0)\n')
             ascFile.write('sw t%d, (t0)\n' % (r))
         elif ent1.type == 'SUBR' and ent1.subprogram.type == 'Fucntion':
@@ -562,7 +563,7 @@ def final():
         elif(quadLst[i][1] == '='):
             loadver(quadLst[i][2], 1)
             loadver(quadLst[i][3],2)
-            ascFile.write('beq,t1,t1,L'+str(quadLst[i][4]+'\n'))
+            ascFile.write('beq,t1,t1,L'+str(quadLst[i][4])+'\n')
         elif(quadLst[i][1] == '<>'):
             loadver(quadLst[i][2],1)
             loadver(quadLst[i][3],1)
@@ -582,7 +583,7 @@ def final():
         elif(quadLst[i][1] == '<='):
             loadver(quadLst[i][2],1)
             loadver(quadLst[i][3],2)
-            ascFile('ble,t1,t2,L'+str(quadLst[i][4])+'\n')
+            ascFile.write('ble,t1,t2,L'+str(quadLst[i][4])+'\n')
         elif(quadLst[i][1] == ':='):
             loadver(quadLst[i][2],1)
             storev(1, quadLst[i][4])
@@ -643,12 +644,12 @@ def final():
                         ascFile.write('lw t0,-%d(sp)\n' % (ent1.parameter.offset))
                         ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
             elif (sc1.nestingLevel < scopeList[-1].nestingLevel):
-                if ent1.type == 'PARAM' and etn1.parameter.mode == 'REF':
-                    gnlvcode(quadLst[i][2])
+                if ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
+                    #gnlvcode(quadLst[i][2])
                     ascFile.write('lw t0,(t0)\n')
                     ascFile.write('sw t0, -%d(fp)\n' % (12+4*series))
                 else:
-                    gnlvcode(quadLst[i][2])
+                    #gnlvcode(quadLst[i][2])
                     ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
             series += 1
         elif(quadLst[i][1] == 'begin_block' and scopeList[-1].nestingLevel !=0):

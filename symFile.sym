@@ -10,7 +10,7 @@ SCOPE: name:fibonacci nestingLevel:1
 
 
 
-SCOPE: name:τεστ nestingLevel:0
+SCOPE: name:Ο„ΞµΟƒΟ„ nestingLevel:0
 	ENTITIES:
 	ENTITY:  name:x	 type:VAR	 variable-type:Int	 offset:12
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
@@ -43,7 +43,7 @@ SCOPE: name:isPrime nestingLevel:1
 
 
 
-SCOPE: name:τεστ nestingLevel:0
+SCOPE: name:Ο„ΞµΟƒΟ„ nestingLevel:0
 	ENTITIES:
 	ENTITY:  name:x	 type:VAR	 variable-type:Int	 offset:12
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
@@ -68,30 +68,12 @@ SCOPE: name:isPrime nestingLevel:1
 
 
 
-SCOPE: name:τεστ nestingLevel:0
+SCOPE: name:Ο„ΞµΟƒΟ„ nestingLevel:0
 	ENTITIES:
 	ENTITY:  name:x	 type:VAR	 variable-type:Int	 offset:12
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
 	ENTITY:  name:fibonacci	 type:SUBPR	 subprogram-type:Function	 startQuad:1	 frameLength:36		ARGUMENTS:
 	ENTITY:  name:isPrime	 type:SUBPR	 subprogram-type:Function	 startQuad:26	 frameLength:28		ARGUMENTS:
-
-
-
-############################################################
-
-
-
-
-###########################################################
-SCOPE: name:τεστ nestingLevel:0
-	ENTITIES:
-	ENTITY:  name:x	 type:VAR	 variable-type:Int	 offset:12
-	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
-	ENTITY:  name:fibonacci	 type:SUBPR	 subprogram-type:Function	 startQuad:1	 frameLength:36		ARGUMENTS:
-	ENTITY:  name:isPrime	 type:SUBPR	 subprogram-type:Function	 startQuad:26	 frameLength:28		ARGUMENTS:
-	ENTITY:  name:T$9	 type:TEMP	 temp-type:Int	 offset:20
-	ENTITY:  name:T$10	 type:TEMP	 temp-type:Int	 offset:24
-	ENTITY:  name:T$11	 type:TEMP	 temp-type:Int	 offset:28
 
 
 
