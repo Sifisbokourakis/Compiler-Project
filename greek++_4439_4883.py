@@ -456,28 +456,6 @@ def search_comb(n):
 
 ascFile = open('ascFile.asm', 'w')
 ascFile.write('         \n\n\n')
-'''
-def gnlvcode(name):
-    global scopeList
-    global ascFile
-
-    ascFile.write('lw t0, -4(sp)\n')
-
-    (sc1,ent1)=search_comb(name)
-
-    myHel = scopeList[-1].nestingLevel - sc1.nestingLevel;
-    myHel = myHel - 1
-
-    for i in range(0, myHel):
-        ascFile.write('lw t0, -3(t0)\n')
-
-    if ent1.type=='VAR':
-        x = ent1.variable.offset
-    elif ent1.type=='PARAM':
-        x=ent1.variable.offset
-    
-    ascFile.write('addi t0, t0, -%d\n' % (x))
-'''
 
 def loadver(v, r):
     global scopeList
@@ -500,13 +478,10 @@ def loadver(v, r):
                 ascFile.write('lw t%d, (t0)\n' % (r))
         elif (sc1.nestingLevel < scopeList[-1].nestingLevel):
             if ent1.type == 'VAR':
-                #gnlvcode(v)
                 ascFile.write('lw t%d, (t0)\n' %(r))
             elif (ent1.type == 'PARAM' and ent1.parameter.mode == 'CV'):
-                #gnlvcode(v)
                 ascFile.write('lw t%d, (t0)\n' % (r))
             elif ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
-                #gnlvcode(v)
                 ascFile.write('lw t0, (t0)\n')
                 ascFile.write('lw t%d, (t0)\n' %(r))
 def storev(r,v):
@@ -545,7 +520,7 @@ def storev(r,v):
 def search_list_for_call(i):
     global quadLst
     start = i
-    while start > i:
+    while start >= i:
         if(quadLst[start][i] == 'call'):
             return str(quadLst[start][2])
         start = start + 1
@@ -564,10 +539,10 @@ def final():
         elif(quadLst[i][1] == '='):
             loadver(quadLst[i][2], 1)
             loadver(quadLst[i][3],2)
-            ascFile.write('beq,t1,t1,L'+str(quadLst[i][4])+'\n')
+            ascFile.write('beq,t1,t2,L'+str(quadLst[i][4])+'\n')
         elif(quadLst[i][1] == '<>'):
             loadver(quadLst[i][2],1)
-            loadver(quadLst[i][3],1)
+            loadver(quadLst[i][3],2)
             ascFile.write('bne,t1,t2,L'+str(quadLst[i][4]+'\n'))
         elif(quadLst[i][1] == '>'):
             loadver(quadLst[i][2],1)
@@ -580,7 +555,7 @@ def final():
         elif(quadLst[i][1] == '>='):
             loadver(quadLst[i][2],1)
             loadver(quadLst[i][3],2)
-            ascFile.write('bqe,t1,t2,L'+str(quadLst[i][4])+'\n')
+            ascFile.write('bge,t1,t2,L'+str(quadLst[i][4])+'\n')
         elif(quadLst[i][1] == '<='):
             loadver(quadLst[i][2],1)
             loadver(quadLst[i][3],2)
@@ -609,50 +584,16 @@ def final():
             ascFile.write('div,t1,t1,t2\n')
             storev(1,quadLst[i][4])
         elif(quadLst[i][1] == 'out'):
-            loadver(quadLst[i][4])
+            loadver(quadLst[i][4], 1)
             ascFile.write('mv a0 , t1 \n')
             ascFile.write('li a7,1 \n')
             ascFile.write('ecall \n')
-        elif(quadLst[i][1]):
+        elif(quadLst[i][1] == 'inp'):
             ascFile.write('li a7,5 \n')
             ascFile.write('ecall \n')
             ascFile.write('mv t1,a0 \n')
             storev(1, quadLst[1][2])
-        elif(quadLst[i][1]  == 'par'):
-            if series == -1:
-                name1 = search_list_for_call(i)
-                (sc1, ent1) = search_comb(name1)
-                ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
-                series = 0
-            if(quadLst[i][3] == 'CV'):
-                loadver(quadLst[i][2], 0)
-                ascFile.write('sw t0,-%d\n' % (ent1.temVar.offset))
-                series += 1
-            elif(quadLst[i][3] == 'RET'):
-                (sc1, ent1) = search_comb(quadLst[i][2])
-                ascFile.write('addi t0,sp,-%d\n' % (ent1.tempVar.offset))
-                ascFile.write('sw t0,-8(fp)\n')
-            elif(quadLst[i][3] == 'REF'):
-                (sc1, ent1) == search_comb(quadLst[i][2])
-                if sc1.nestingLevel == scopeList[-1].nestingLevel:
-                    if ent1.type == 'VAR':
-                        ascFile.write('addi t0,sp,-%d\n' % (ent1.variable.offset))
-                        ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
-                    elif ent1.type == 'PARAM' and ent1.parameter.mode == 'CV':
-                        ascFile.write('addi t0,sp,-%d\n' % (ent1.parameter.offset))
-                        ascFile.write('sw t0, -%d(fp)\n' % (12+4*series))
-                    elif ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
-                        ascFile.write('lw t0,-%d(sp)\n' % (ent1.parameter.offset))
-                        ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
-            elif (sc1.nestingLevel < scopeList[-1].nestingLevel):
-                if ent1.type == 'PARAM' and ent1.parameter.mode == 'REF':
-                    #gnlvcode(quadLst[i][2])
-                    ascFile.write('lw t0,(t0)\n')
-                    ascFile.write('sw t0, -%d(fp)\n' % (12+4*series))
-                else:
-                    #gnlvcode(quadLst[i][2])
-                    ascFile.write('sw t0,-%d(fp)\n' % (12+4*series))
-            series += 1
+        
         elif(quadLst[i][1] == 'begin_block' and scopeList[-1].nestingLevel !=0):
             ascFile.write('sw ra,(sp)\n')
         elif (quadLst[i][1] == 'begin_block' and scopeList[-1].nestingLevel == 0):
@@ -996,7 +937,7 @@ def syntax():
                 compute_startQuad()
                 genQuad('begin_block', name, '_', '_')
                 sequence()
-                compute_framelength
+                compute_framelength()
                 genQuad('end_block', name, '_', '_')
 
                 print_Symbol_table()
@@ -1802,12 +1743,4 @@ intCode(intFile)
 symFile.close()
 intFile.close()
 
-
-'''    
-def print_Quads():
-    for i in range(len(quadLst)):
-        print(str(quadLst[i][0])+" "+str(quadLst[i][1])+" "+str(quadLst[i][2])+" "+str(quadLst[i][3])+" "+str(quadLst[i][4]))
-
-print_Quads()                        
-'''        
         

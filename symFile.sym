@@ -39,7 +39,7 @@ SCOPE: name:isPrime nestingLevel:1
 	ENTITY:  name:k	 type:PARAM	 mode:CV	 offset:12
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
 	ENTITY:  name:t	 type:VAR	 variable-type:Int	 offset:20
-	ENTITY:  name:divides	 type:SUBPR	 subprogram-type:Procedure	 startQuad:17	 frameLength:0		ARGUMENTS:
+	ENTITY:  name:divides	 type:SUBPR	 subprogram-type:Procedure	 startQuad:17	 frameLength:32		ARGUMENTS:
 
 
 
@@ -63,7 +63,7 @@ SCOPE: name:isPrime nestingLevel:1
 	ENTITY:  name:k	 type:PARAM	 mode:CV	 offset:12
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
 	ENTITY:  name:t	 type:VAR	 variable-type:Int	 offset:20
-	ENTITY:  name:divides	 type:SUBPR	 subprogram-type:Procedure	 startQuad:17	 frameLength:0		ARGUMENTS:
+	ENTITY:  name:divides	 type:SUBPR	 subprogram-type:Procedure	 startQuad:17	 frameLength:32		ARGUMENTS:
 	ENTITY:  name:T$8	 type:TEMP	 temp-type:Int	 offset:24
 
 
@@ -74,6 +74,24 @@ SCOPE: name:τεστ nestingLevel:0
 	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
 	ENTITY:  name:fibonacci	 type:SUBPR	 subprogram-type:Function	 startQuad:1	 frameLength:36		ARGUMENTS:
 	ENTITY:  name:isPrime	 type:SUBPR	 subprogram-type:Function	 startQuad:26	 frameLength:28		ARGUMENTS:
+
+
+
+############################################################
+
+
+
+
+###########################################################
+SCOPE: name:τεστ nestingLevel:0
+	ENTITIES:
+	ENTITY:  name:x	 type:VAR	 variable-type:Int	 offset:12
+	ENTITY:  name:i	 type:VAR	 variable-type:Int	 offset:16
+	ENTITY:  name:fibonacci	 type:SUBPR	 subprogram-type:Function	 startQuad:1	 frameLength:36		ARGUMENTS:
+	ENTITY:  name:isPrime	 type:SUBPR	 subprogram-type:Function	 startQuad:26	 frameLength:28		ARGUMENTS:
+	ENTITY:  name:T$9	 type:TEMP	 temp-type:Int	 offset:20
+	ENTITY:  name:T$10	 type:TEMP	 temp-type:Int	 offset:24
+	ENTITY:  name:T$11	 type:TEMP	 temp-type:Int	 offset:28
 
 
 
