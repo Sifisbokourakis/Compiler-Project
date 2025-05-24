@@ -1,5 +1,4 @@
 #Mpokourakis Iosif 4439 Vasilliki Maria Mpalaska 4883
-#Ayto einai ena test 
 
 import os
 import sys
@@ -453,7 +452,6 @@ def search_comb(n):
     print("In the symbols table there is no entity named: ", str(n))
     exit(-1)
 
-
 ascFile = open('ascFile.asm', 'w')
 ascFile.write('         \n\n\n')
 
@@ -584,7 +582,7 @@ def final():
             ascFile.write('div,t1,t1,t2\n')
             storev(1,quadLst[i][4])
         elif(quadLst[i][1] == 'out'):
-            loadver(quadLst[i][4], 1)
+            loadver(quadLst[i][2], 1) 
             ascFile.write('mv a0 , t1 \n')
             ascFile.write('li a7,1 \n')
             ascFile.write('ecall \n')
@@ -592,7 +590,7 @@ def final():
             ascFile.write('li a7,5 \n')
             ascFile.write('ecall \n')
             ascFile.write('mv t1,a0 \n')
-            storev(1, quadLst[1][2])
+            storev(1, quadLst[i][2])
         
         elif(quadLst[i][1] == 'begin_block' and scopeList[-1].nestingLevel !=0):
             ascFile.write('sw ra,(sp)\n')
@@ -1554,7 +1552,7 @@ def syntax():
             line = res[2]
             #print (res[0])
             #print("I'm here.")
-            idtail(val, 1)
+            idtail(val, 1) 
             return val
         else:
             print("Error: There is no variable or constant or expression. ", line)
@@ -1663,7 +1661,7 @@ def genQuad(op,x,y,z):
 
     counter += 1
     quadLst += [quads]
-    quadLstFinal += [list]
+    quadLstFinal += [quads]
     return quads
 
 temp = 1
@@ -1719,8 +1717,9 @@ def backPatch(list,z):
 '''
 
 def intCode(intF):
-    for i in range(len(quadLst)):
-        qd = quadLst[i]
+    global quadLstFinal
+    for i in range(len(quadLstFinal)):
+        qd = quadLstFinal[i]
         intF.write(str(qd[0]))
         intF.write(": ")
         intF.write(str(qd[1]))
